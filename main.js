@@ -5,12 +5,14 @@ import gsap from 'gsap';
 const scene = new THREE.Scene();
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.domElement.id = "threejs-canvas";
 document.body.append(renderer.domElement);
 renderer.setClearColor(0x87CEEB);
 
 
 // Object
 const cube = new THREE.Mesh(new THREE.BoxGeometry(1,1,1), new THREE.MeshLambertMaterial( {color : 0x32a852} ));
+cube.canView = true;
 cube.position.x = 2;
 cube.name = "cube";
 scene.add( cube );
@@ -26,9 +28,13 @@ light.position.set(4,3,2);
 scene.add( light );
 
 const cubePopup = new THREE.Mesh(new THREE.PlaneGeometry(2,1), new THREE.MeshBasicMaterial( {color:0xffffff} ));
-cubePopup.position.set(3.25, 0.75, 1);
 cubePopup.visible = false;
 scene.add( cubePopup );
+
+// function viewObject(object) {
+//     let initPosition = object.position;
+    
+// }
 
 
 // Raycaster
@@ -46,15 +52,9 @@ document.addEventListener('mousemove', (event) => {
 
     //Raycast
     rayCaster.setFromCamera(mouse, camera);
-    // console.log(mouse);
     const intersects = rayCaster.intersectObjects( scene.children );
     if (intersects.length > 0) {
-        //console.log("cast" + intersects[0].object.name);
-        if (intersects[0].object.name == "cube") {
-            cubePopup.visible = true;
-        } else {
-            cubePopup.visible = false;
-        }
+        cubePopup.visible = true;
     } else {
         cubePopup.visible = false;
     }
@@ -74,6 +74,14 @@ document.addEventListener('mousemove', (event) => {
 });
 
 document.addEventListener('click', (event) => {
+    const intersects = rayCaster.intersectObjects( scene.children );
+    if (intersects.length > 0) {
+        const intersectedObject = intersects[0].object; // Access the actual object
+        if (intersectedObject.canView) {
+            console.log("open");
+        }
+    }
+
     // Camera
     if (turnLeft) {
         gsap.to(cameraMove, {value:cameraRotateTarget[cameraView-1], duration:1});
