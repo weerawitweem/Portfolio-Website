@@ -3,11 +3,16 @@ import gsap from 'gsap';
 
 //Initialize scene
 const scene = new THREE.Scene();
+// Renderer
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.domElement.id = "threejs-canvas";
 document.body.append(renderer.domElement);
 renderer.setClearColor(0x87CEEB);
+// Raycaster
+const rayCaster = new THREE.Raycaster();
+// Cursor
+const mouse = new THREE.Vector2();
 
 
 // Object
@@ -31,18 +36,7 @@ const cubePopup = new THREE.Mesh(new THREE.PlaneGeometry(2,1), new THREE.MeshBas
 cubePopup.visible = false;
 scene.add( cubePopup );
 
-// function viewObject(object) {
-//     let initPosition = object.position;
-    
-// }
 
-
-// Raycaster
-const rayCaster = new THREE.Raycaster();
-
-
-// Cursor
-const mouse = new THREE.Vector2();
 
 
 //Event
@@ -59,18 +53,6 @@ document.addEventListener('mousemove', (event) => {
         cubePopup.visible = false;
     }
 
-    // Camera
-    turnLeft = (cameraView == 1 || cameraView == 2) && inleftArea;
-    turnRight = (cameraView == 0 || cameraView == 1) && inrightArea;
-    console.log(turnLeft + " " + inleftArea + " " + (cameraView == 1 || cameraView == 2));
-    if (mouse.x > 0.85) {
-        inrightArea = true;
-    } else if (mouse.x < -0.85) {
-        inleftArea = true;
-    } else {
-        inleftArea = false;
-        inrightArea = false;
-    }
 });
 
 document.addEventListener('click', (event) => {
@@ -81,15 +63,6 @@ document.addEventListener('click', (event) => {
             console.log("open");
         }
     }
-
-    // Camera
-    if (turnLeft) {
-        gsap.to(cameraMove, {value:cameraRotateTarget[cameraView-1], duration:1});
-        cameraView--;
-    } else if (turnRight) {
-        gsap.to(cameraMove, {value:cameraRotateTarget[cameraView+1], duration:1});
-        cameraView++;
-    }
 });
 
 
@@ -99,11 +72,29 @@ camera.position.z = 5;
 const cameraRotateTarget = [-1, 0, 1];
 let cameraRotateSensitivity = 0.1;
 let cameraView = 1;
-let inleftArea = false, inrightArea = false;
-let turnLeft = false;
-let turnRight = false;
 let cameraMove = {value:0};
 
+function turnLeft() {
+    if (cameraView == 1 || cameraView == 2) {
+        gsap.to(cameraMove, {value:cameraRotateTarget[cameraView-1], duration:1});
+        cameraView--;
+    }
+}
+
+function turnRight() {
+    if (cameraView == 0 || cameraView == 1) {
+        gsap.to(cameraMove, {value:cameraRotateTarget[cameraView+1], duration:1});
+        cameraView++;
+    }
+}
+
+// Add event listener to the button
+document.addEventListener("DOMContentLoaded", function() {
+    const leftbutton = document.getElementById("left-button");
+    leftbutton.addEventListener("click", turnLeft);
+    const rightbutton = document.getElementById("right-button");
+    rightbutton.addEventListener("click", turnRight);
+});
 
 function cameraAnimate() {
     // console.log(mouse.x + " " + mouse.y);
