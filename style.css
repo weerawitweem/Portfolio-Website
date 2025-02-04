@@ -28,7 +28,7 @@ body, html {
     height: 100%;
 }
 
-.middle {
+#middle {
     width: 70%;
     display: inline-block;
 }
@@ -54,4 +54,8 @@ button {
     cursor: pointer;
     border-radius: 8px;
     visibility: visible;
+}
+
+.view-text {
+    visibility: hidden;
 }
