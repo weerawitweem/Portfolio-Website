@@ -20,17 +20,31 @@ const rayCaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
 
 // Loader
-const loader = THREE.GLTFLoader();
+//const loader = THREE.GLTFLoader();
 //-----------------------------------------------------------------------------------------------------------------------//
 
 
 //-----------------------------------------------------------------------------------------------------------------------//
 // Object
-const cube = new THREE.Mesh(new THREE.BoxGeometry(1,1,1), new THREE.MeshLambertMaterial( {color : 0x32a852} ));
-cube.canView = true;
-cube.position.x = 2;
-cube.name = "cube";
-scene.add( cube );
+const cube1 = new THREE.Mesh(new THREE.BoxGeometry(0.5,0.5,0.5), new THREE.MeshLambertMaterial( {color : 0x32a852} ));
+cube1.name = "introbook";
+cube1.position.x = 0;
+scene.add( cube1 );
+
+const cube2 = new THREE.Mesh(new THREE.BoxGeometry(0.5,0.5,0.5), new THREE.MeshLambertMaterial( {color : 0x32a852} ));
+cube2.name = "pythonProject";
+cube2.position.x = 1;
+scene.add( cube2 );
+
+const cube3 = new THREE.Mesh(new THREE.BoxGeometry(0.5,0.5,0.5), new THREE.MeshLambertMaterial( {color : 0x32a852} ));
+cube3.name = "ccppProject";
+cube3.position.x = 2;
+scene.add( cube3 );
+
+const cube4 = new THREE.Mesh(new THREE.BoxGeometry(0.5,0.5,0.5), new THREE.MeshLambertMaterial( {color : 0x32a852} ));
+cube4.name = "javaProject";
+cube4.position.x = 3;
+scene.add( cube4 );
 
 const sphere = new THREE.Mesh(new THREE.SphereGeometry(0.5), new THREE.MeshPhongMaterial( {color : 0x3246a8} ));
 sphere.position.x = -2;
@@ -41,12 +55,33 @@ const light = new THREE.DirectionalLight(0xffffff, 5);
 light.position.set(4,3,2);
 
 scene.add( light );
-
-const cubePopup = new THREE.Mesh(new THREE.PlaneGeometry(2,1), new THREE.MeshBasicMaterial( {color:0xffffff} ));
-cubePopup.visible = false;
-scene.add( cubePopup );
 //-----------------------------------------------------------------------------------------------------------------------//
 
+//-----------------------------------------------------------------------------------------------------------------------//
+// Middle Content
+// State  <none> - <introduction> - <python project> - <c/c++ experience> - <java project>
+let isViewing = false;
+
+function closePopup() {
+    console.log("Close");
+}
+
+function openIntro() {
+    console.log("open intro");
+}
+
+function openPython() {
+    console.log("open python");
+}
+
+function openCCPP() {
+    console.log("open c/cpp");
+}
+
+function openJava() {
+    console.log("open java");
+}
+//-----------------------------------------------------------------------------------------------------------------------//
 
 //-----------------------------------------------------------------------------------------------------------------------//
 // Camera
@@ -87,21 +122,32 @@ document.addEventListener('mousemove', (event) => {
 
     //Raycast
     rayCaster.setFromCamera(mouse, camera);
-    const intersects = rayCaster.intersectObjects( scene.children );
-    if (intersects.length > 0) {
-        cubePopup.visible = true;
-    } else {
-        cubePopup.visible = false;
-    }
 
 });
 
 document.addEventListener('click', (event) => {
     const intersects = rayCaster.intersectObjects( scene.children );
-    if (intersects.length > 0) {
+    for (let i=0;i<intersects.length;i++) {
+        console.log( intersects[i].name );
+    }
+    if (isViewing) {
+        closePopup();
+        isViewing = false;
+    }
+    else if (intersects.length > 0) {
         const intersectedObject = intersects[0].object;
-        if (intersectedObject.canView) {
-            intersectedObject.view();
+        if (intersectedObject.name == "introbook") {
+            openIntro();
+            isViewing = true;
+        } else if (intersectedObject.name == "pythonProject") {
+            openPython();
+            isViewing = true;
+        } else if (intersectedObject.name == "ccppProject") {
+            openCCPP();
+            isViewing = true;
+        } else if (intersectedObject.name == "javaProject") {
+            openJava();
+            isViewing = true;
         }
     }
 });
