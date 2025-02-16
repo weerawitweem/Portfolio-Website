@@ -31,7 +31,7 @@ const loader = new GLTFLoader();
 loader.load( 'Assets/model/room.glb', function ( gltf ) {
 
 	scene.add( gltf.scene );
-    gltf.scene.position.set(0, -6, 3);
+    gltf.scene.position.set(0, 0, 0);
 
 }, undefined, function ( error ) {
 
@@ -65,9 +65,13 @@ sphere.name = "sphere";
 scene.add( sphere );
 
 const light = new THREE.DirectionalLight(0xffffff, 5);
-light.position.set(4,3,2);
+light.position.set(1,8,2);
 
 scene.add( light );
+const light2 = new THREE.DirectionalLight(0xffffff, 5);
+light2.position.set(1,8,2);
+
+scene.add( light2 );
 //-----------------------------------------------------------------------------------------------------------------------//
 
 //-----------------------------------------------------------------------------------------------------------------------//
@@ -134,31 +138,95 @@ function openJava() {
 
 //-----------------------------------------------------------------------------------------------------------------------//
 // Camera
-const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-camera.position.z = 5;
-const cameraRotateTarget = [-1, 0, 1];
-let cameraRotateSensitivity = 0.1;
+const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+camera.position.set(0,5,5);
 let cameraView = 1;
-let cameraMove = {value:0};
 
+function gotoExpAndProject() {
+    gsap.to(camera.position, {
+        duration:1.5,
+        x:-2,
+        y:5,
+        z:2
+    });
+    const leftRotation = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), 2);
+    const downRotation = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1, 0, 0), 1);
+
+    // Combine the rotations
+    const targetRotation = new THREE.Quaternion();
+    targetRotation.multiplyQuaternions(leftRotation, downRotation);
+    targetRotation.multiplyQuaternions(targetRotation, camera.quaternion);
+
+    // Animate the camera's quaternion (rotation)
+    gsap.to(camera.quaternion, {
+        duration: 1.5,
+        x: targetRotation.x,
+        y: targetRotation.y,
+        z: targetRotation.z,
+        w: targetRotation.w
+    });
+
+
+    cameraView = 0;
+    console.log("gotopro");
+}
+
+function gotoIntro() {
+    gsap.to(camera.position, {
+        duration:1.5,
+        x:0,
+        y:5,
+        z:5
+    });
+    gsap.to(camera.rotation, {
+        duration:1.5,
+        x:0,
+        y:0,
+        z:0
+    });
+    cameraView = 1;
+    console.log("gointro");
+}
+
+function gotoMore() {
+    gsap.to(camera.position, {
+        duration:1.5,
+        x:2,
+        y:5,
+        z:5
+    });
+    cameraView = 2;
+    console.log("gomore");
+}
 
 function turnLeft() {
-    if (cameraView == 1 || cameraView == 2) {
-        gsap.to(cameraMove, {value:cameraRotateTarget[cameraView-1], duration:1});
-        cameraView--;
+    console.log("left");
+    if (cameraView == 1) {
+        gotoExpAndProject();
+    } else if (cameraView == 2) {
+        gotoIntro();
     }
 }
 
 function turnRight() {
-    if (cameraView == 0 || cameraView == 1) {
-        gsap.to(cameraMove, {value:cameraRotateTarget[cameraView+1], duration:1});
-        cameraView++;
+    console.log("right");
+    if (cameraView == 0) {
+        gotoIntro();
+    } else if (cameraView == 1) {
+        gotoMore();
     }
 }
 
 function cameraAnimate() {
-    camera.rotation.y = - mouse.x * cameraRotateSensitivity - cameraMove.value;
-    camera.rotation.x = ( mouse.y * cameraRotateSensitivity );
+    // gsap.to(camera.rotation, {
+    //     x: mouse.y * 0.1, // Adjust the multiplier for rotation intensity
+    //     y: -mouse.x * 0.1, // Adjust the multiplier for rotation intensity
+    //     duration: 0.5,
+    //     onUpdate: function() {
+    //       // Ensure the camera matrix is updated
+    //       camera.updateProjectionMatrix();
+    //     }
+    //   });
 }
 //-----------------------------------------------------------------------------------------------------------------------//
 
