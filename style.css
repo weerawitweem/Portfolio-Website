@@ -30,15 +30,47 @@ body, html {
 
 #middle {
     width: 70%;
-    display: inline-block;
     display: flex;
+    align-items: center;
+    justify-content: space-evenly;
     flex-wrap: wrap;
-    align-items: flex-start;
+    align-content: center;
+    opacity: 0;
+}
+
+@font-face {
+    font-family: 'magical';
+    src: url('Assets/font/kawoszeh.ttf') format('truetype');
+}
+
+#Intro-Img {
+    width: 20%;
+    height: 35%;
+    border: 5px solid transparent;
+    border-image: linear-gradient(to right, #D4AF37, #FFD700, #D4AF37) 1;
+    
+}
+#Intro-Text {
+    font-size: xx-large;
+    font-family: 'magical';
+    user-select: none;
+}
+
+#Python-Text {
+    font-size: xx-large;
+    font-family: 'magical';
+    user-select: none;
+}
+
+#Java-Text {
+    font-size: xx-large;
+    font-family: 'magical';
+    user-select: none;
 }
 
 .Button-Text {
     height: 100%;
-    visibility: hidden;
+    opacity: 0;
     background-color: rgba(255, 215, 0, 0.3);
     color: white;
     border: 5px solid transparent;
@@ -49,8 +81,9 @@ body, html {
     align-items: center;
     position: relative;
     cursor: pointer;
-    visibility: hidden;
     user-select: none;
+    font-family: 'magical';
+    transition: opacity 1s ease-in-out;
 }
 
 .button {
@@ -58,7 +91,8 @@ body, html {
 }
 
 .button:hover .Button-Text {
-    visibility: visible;
+    opacity: 1;
+    transition: opacity 1s ease-in-out;
 }
 
 .view-text {
